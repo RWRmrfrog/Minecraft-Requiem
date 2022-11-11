@@ -1,0 +1,194 @@
+// Credits to UpcraftLP for the base build script
+
+plugins {
+    alias(libs.plugins.chenille)
+    id 'io.github.juuxel.loom-quiltflower' version "1.6.0"
+}
+
+group = rootProject.maven_group
+archivesBaseName = rootProject.name
+
+allprojects {
+    apply plugin: 'fabric-loom'
+    apply plugin: 'com.matthewprenger.cursegradle'
+    apply plugin: 'maven-publish'
+    apply plugin: 'org.cadixdev.licenser'
+    apply plugin: 'com.jfrog.artifactory'
+    apply plugin: 'java-library'
+    apply plugin: 'io.github.ladysnake.chenille'
+
+    version = project.mod_version
+
+    chenille {
+        license = 'GPL_WITH_MC_EXCEPTION'
+        displayName = 'Requiem'
+        owners = 'Ladysnake'
+    }
+
+    license {
+        exclude '**/package-info.java'
+    }
+
+    repositories {
+        chenille.repositories {
+            ladysnake()
+            cotton()
+            jamieswhiteshirt()
+            cursemaven()
+            shedaniel()
+            lucko()
+            modrinth()
+            jitpack()
+        }
+        maven {
+            url = 'https://maven.willbl.dev/releases'
+            content {
+                includeGroupByRegex 'com\\.williambl.*'
+            }
+        }
+        maven {
+            name = "Appleskin"
+            url = "https://maven.ryanliptak.com/"
+            content {
+                includeGroup 'squeek.appleskin'
+            }
+        }
+        maven {
+            url = 'https://maven.cafeteria.dev'
+            content {
+                includeGroup 'net.adriantodt.fabricmc'
+            }
+        }
+        maven {
+            url 'https://maven.blamejared.com'
+            content {
+                includeGroupByRegex 'vazkii\\..*'
+            }
+        }
+        maven {
+            url = "https://maven.theillusivec4.top"
+            content {
+                includeGroupByRegex 'top\\.theillusivec4\\..*'
+            }
+        }
+        maven {
+            url = "https://maven.siphalor.de"
+            content {
+                includeGroup 'de.siphalor'
+            }
+        }
+        maven {
+            name = "TerraformersMC"
+            url = "https://maven.terraformersmc.com/releases"
+            content {
+                includeGroupByRegex 'com.terraformersmc.*'
+                includeGroupByRegex 'dev.emi.*'
+            }
+        }
+        mavenLocal()
+    }
+
+    processResources {
+        inputs.property "version", project.version
+
+        filesMatching("fabric.mod.json") {
+            expand "version": project.version
+        }
+    }
+
+    java {
+        withSourcesJar()
+    }
+
+    dependencies {
+        //to change the versions see the gradle.properties file
+        minecraft "com.mojang:minecraft:${project.minecraft_version}"
+        mappings("net.fabricmc:yarn:${yarn_mappings}:v2")
+        modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+        // Fabric API. This is technically optional, but you probably want it anyway.
+        modApi "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+        compileOnly metaLibs.bundles.devAnnotations
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+            }
+        }
+    }
+}
+
+chenille {
+    configureTestmod()
+    configurePublishing {
+        mainArtifact = remapJar.archiveFile
+        withArtifactory()
+        withCurseforgeRelease()
+        withGithubRelease()
+        withModrinthRelease()
+    }
+}
+
+license {
+    exclude '**/model/lib/**.java'
+    exclude '**/RayHelper.java'
+}
+
+dependencies {
+    // Looking for version definitions? see https://docs.gradle.org/7.4-rc-1/userguide/platforms.html
+
+    // Required dependencies
+    api include(project(path: ":requiem-api", configuration: "namedElements")) { transitive = false }
+    api include(project(path: ":requiem-core", configuration: "namedElements")) { transitive = false }
+    modImplementation libs.bundles.requiredLibraries
+    include libs.bundles.requiredLibraries
+
+    // Test dependencies
+    testImplementation testLibs.junit
+    testImplementation testLibs.mockito
+    testmodImplementation testLibs.mockito
+    modLocalImplementation testLibs.elmendorf
+
+    // Optional dependencies
+    modCompileOnly libs.modmenu
+    modLocalRuntime libs.modmenu
+    modCompileOnly (libs.bundles.cloth) { transitive = false }
+    modLocalRuntime (libs.bundles.cloth) { transitive = false }
+    include libs.fiberToCloth
+
+    // Extra compatibility dependencies
+//    modLocalRuntime compatLibs.mobz
+    modCompileOnly (compatLibs.betterGraves) { transitive = false }
+//    modLocalRuntime compatLibs.betterGraves
+//    modCompileOnly compatLibs.biomeMakeover
+//    modLocalRuntime compatLibs.biomeMakeover
+    modCompileOnly (compatLibs.trinkets) { transitive = false }
+//    modLocalRuntime compatLibs.trinkets
+    modCompileOnly (compatLibs.pehkui) { transitive = false }
+//    modLocalRuntime compatLibs.pehkui
+    modCompileOnly (compatLibs.snowmercy) { transitive = false }
+//    modLocalRuntime compatLibs.snowmercy
+    modCompileOnly (compatLibs.bundles.origins) { transitive = false }
+    modLocalRuntime (compatLibs.bundles.origins)
+
+    modCompileOnly (compatLibs.eldritchMobs) { transitive = false }
+//    modLocalRuntime compatLibs.eldritchMobs
+    modCompileOnly (compatLibs.haema) { transitive = false }
+//    modLocalRuntime compatLibs.bundles.haema
+    modCompileOnly (compatLibs.golemsGalore) { transitive = false }
+//    modLocalRuntime compatLibs.bundles.golemsGalore
+    modCompileOnly (compatLibs.bumblezone) { transitive = false }
+//    modLocalRuntime compatLibs.bumblezone
+    modCompileOnly (compatLibs.bewitchment) { transitive = false }
+//    modLocalRuntime compatLibs.bundles.bewitchment
+}
+
+remapJar.dependsOn(project(":requiem-core").tasks.remapJar)
+
+jar {
+    from 'LICENSE-CODE'
+    from 'LICENSE-ART'
+}

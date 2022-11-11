@@ -1,0 +1,44 @@
+pluginManagement {
+    repositories {
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+        maven {
+            name = 'Quilt'
+            url = "https://maven.quiltmc.org/repository/release"
+        }
+        maven {
+            name = 'Cotton'
+            url = 'https://server.bbkr.space/artifactory/libs-release/'
+        }
+        mavenLocal()
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'requiem'
+
+include "requiem-api"
+include "requiem-core"
+
+['pandemonium'].forEach {
+    include it
+    include "${it}-api"
+    project(":$it").projectDir = file("expansions/$it")
+    project(":${it}-api").projectDir = file("expansions/$it/api")
+}
+
+dependencyResolutionManagement {
+    versionCatalogs {
+        compatLibs {
+            from(files('gradle/compat-libs.versions.toml'))
+        }
+        metaLibs {
+            from(files('gradle/meta-libs.versions.toml'))
+        }
+        testLibs {
+            from(files('gradle/test-libs.versions.toml'))
+        }
+    }
+}

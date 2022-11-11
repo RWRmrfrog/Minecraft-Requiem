@@ -1,0 +1,15 @@
+{
+  "parent": "mixins.requiem.common.json",
+  "package": "ladysnake.requiem.compat.mixin",
+  "plugin": "ladysnake.requiem.compat.RequiemCompatMixinPlugin",
+  "required": false,
+  "client": [
+  ],
+  "mixins": [
+    "bettergraves.BetterGravesMixin",
+    "biomemakeover.EntityPartMixin",
+    "haema.VampireBloodInjectorItemMixin",
+    "snowmercy.WeaponizedSnowGolemEntityMixin",
+    "the_bumblezone.BeehiveBlockMixin"
+  ]
+}

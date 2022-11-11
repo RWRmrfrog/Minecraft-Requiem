@@ -1,0 +1,19 @@
+archivesBaseName = "${rootProject.archivesBaseName}-${project.name.toLowerCase(Locale.ROOT)}"
+group = "${rootProject.group}.${rootProject.archivesBaseName}"
+
+dependencies {
+    implementation project(path: ":requiem-api", configuration: "namedElements")
+    implementation project(path: ":requiem-core", configuration: "namedElements")
+    implementation project(path: ":", configuration: "namedElements")
+    implementation project(path: ":pandemonium-api", configuration: "namedElements")
+    include project(":pandemonium-api")
+    modImplementation libs.bundles.requiredLibraries
+    modCompileOnly libs.modmenu
+    modCompileOnly libs.bundles.cloth
+    modCompileOnly (compatLibs.origins) { transitive = false }
+    modCompileOnly compatLibs.haema
+}
+
+jar {
+    from rootProject.files("LICENSE-CODE", "LICENSE-ART")
+}

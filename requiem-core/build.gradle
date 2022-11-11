@@ -1,0 +1,14 @@
+archivesBaseName = "requiem-core"
+group = rootProject.group
+
+dependencies {
+    api project(path: ":requiem-api", configuration: "namedElements")
+    modImplementation libs.playerAbilityLib
+    modImplementation libs.locki
+    modImplementation libs.cca.base
+    modImplementation libs.blabber
+    modImplementation libs.fabricPermissionsApi
+    modImplementation libs.reachEntityAttributes
+}
+
+remapJar.dependsOn(project(":requiem-api").tasks.remapJar)

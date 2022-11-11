@@ -1,0 +1,21 @@
+# eclipse
+bin
+.settings
+.classpath
+.project
+
+# idea
+out
+*.ipr
+*.iws
+.idea
+
+# gradle
+build
+.gradle
+logs
+
+# other
+eclipse
+run
+src\main\resources\assets\minecraft
